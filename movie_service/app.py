@@ -13,7 +13,7 @@ encoded_password = quote_plus(password)
 CLOUD_SQL_USERNAME="postgres"
 CLOUD_SQL_DATABASE="imdb"
 CLOUD_SQL_INSTANCE="cmpt-786-im:us-central1:cmpt-756-final-project"
-CLOUD_SQL_PROXY_IP="host.docker.internal"
+CLOUD_SQL_PROXY_IP="localhost"
 # app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql+psycopg2://{CLOUD_SQL_USERNAME}:{encoded_password}@/{CLOUD_SQL_DATABASE}?host=/cloudsql/{CLOUD_SQL_INSTANCE}"
 app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql+psycopg2://{CLOUD_SQL_USERNAME}:{encoded_password}@{CLOUD_SQL_PROXY_IP}/{CLOUD_SQL_DATABASE}"
 
