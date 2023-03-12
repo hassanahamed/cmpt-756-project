@@ -14,9 +14,8 @@ movies = [
 
 @app.route("/movies")
 def get_movies():
-    rating_service_ip = socket.gethostbyname("rating_service")
     for movie in movies:
-        ratings_response = requests.get(f"http://{rating_service_ip}:5000/ratings?movie_id={movie['id']}")
+        ratings_response = requests.get(f"http://rating-service:5002/ratings?movie_id={movie['id']}")
         if ratings_response.ok:
             ratings = ratings_response.json()
             movie["ratings"] = ratings
