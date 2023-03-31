@@ -1,0 +1,9 @@
+FROM influxdb:1.8.5
+
+ENV INFLUXDB_INIT_MODE=setup \
+    INFLUXDB_INIT_USERNAME=sha \
+    INFLUXDB_INIT_PASSWORD=Welcome@1234
+
+EXPOSE 8086
+
+CMD [ "influxd" ]
