@@ -55,7 +55,7 @@ def create_rating():
 
 
 @app.route('/ratings', methods=['PUT'])
-def update_rating(id):
+def update_rating():
     data = request.get_json()
     tconst = data.get('tconst')
     rating_data = request.get_json()
@@ -69,7 +69,7 @@ def update_rating(id):
     return jsonify(rating.to_dict())
 
 @app.route('/ratings', methods=['DELETE'])
-def delete_rating(id):
+def delete_rating():
     data = request.get_json()
     tconst = data.get('tconst')
     rating = Rating.query.filter_by(tconst=tconst).first()
