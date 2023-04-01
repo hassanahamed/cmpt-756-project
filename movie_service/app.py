@@ -30,6 +30,17 @@ class MovieDetails(db.Model):
     region = db.Column(db.String(5000))
     release_year = db.Column(db.Float)
 
+    def to_dict(self):
+        return {
+            'tconst': self.tconst,
+            'primarytitle': self.primarytitle,
+            'genres': self.genres,
+            'runtimeminutes': self.runtimeminutes,
+            'language': self.language,
+            'region': self.region,
+            'release_year': self.release_year
+        }
+
 # movies = [
 #     {"id": 1, "title": "The Shawshank Redemption", "year": 1994},
 #     {"id": 2, "title": "The Godfather", "year": 1972},
