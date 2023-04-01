@@ -172,28 +172,50 @@ def get_movies_by_rating():
         for movie in movies:
             rating_service_payload = {'tconst': movie.tconst}
             rating_response = requests.get(rating_service_url, json=rating_service_payload)
-            rating = rating_response.json()['averagerating']
-            if rating >= float(rating_threshold):
-                movies_with_ratings.append({'movie': movie.to_dict(), 'rating': rating})
+            if rating_response.status_code == 200:
+                rating = rating_response.json()['averagerating']
+                if rating >= float(rating_threshold):
+                    movies_with_ratings.append({'movie': movie.to_dict(), 'rating': rating})
+            else:
+                movies_with_ratings.append({'movie': movie.to_dict(), 'rating': None})
         return jsonify(movies_with_ratings)
     else:
         return jsonify([movie.to_dict() for movie in movies])
 
+
 @app.route('/movies_by_rating', methods=['POST'])
 def create_movie_by_rating():
-    movie_data = request.get_json()
-    new_movie = MovieDetails(**movie_data)
-    db.session.add(new_movie)
+    data = request.get_json()
+    tconst = data.get('tconst')
+    primarytitle = data.get('primarytitle')
+    genres = data.get('genres')
+    runtimeminutes = data.get('runtimeminutes')
+    language = data.get('language')
+    region = data.get('region')
+    release_year = data.get('release_year')
+    averagerating = data.get('averagerating')
+    numvotes = data.get('numvotes')
+
+    movie = MovieDetails(tconst=tconst, primarytitle=primarytitle, genres=genres,
+                         runtimeminutes=runtimeminutes, language=language,
+                         region=region, release_year=release_year)
+    db.session.add(movie)
     db.session.commit()
 
     rating_service_url = 'http://rating-service:5002/ratings'
     rating_service_payload = {
-        'tconst': new_movie.tconst,
-        'averagerating': movie_data['averagerating'],
-        'numvotes': movie_data['numvotes']
+        'tconst': tconst,
+        'averagerating': averagerating,
+        'numvotes': numvotes
     }
     rating_response = requests.post(rating_service_url, json=rating_service_payload)
-    return jsonify(new_movie.to_dict()), 201
+
+    if rating_response.status_code == 201:
+        return jsonify({'message': 'Movie and rating created successfully'}), 201
+    else:
+        return jsonify({'error': 'Failed to add rating to database'}), 500
+
+
 
 @app.route('/movie_by_rating/<tconst>', methods=['GET'])
 def get_movie_by_rating(tconst):
@@ -204,7 +226,10 @@ def get_movie_by_rating(tconst):
     rating_service_url = 'http://rating-service:5002/ratings'
     rating_service_payload = {'tconst': tconst}
     rating_response = requests.get(rating_service_url, json=rating_service_payload)
-    rating = rating_response.json()['averagerating']
+    if rating_response.status_code == 200:
+        rating = rating_response.json()['averagerating']
+    else:
+        rating = ''
     return jsonify({'movie': movie.to_dict(), 'rating': rating})
 
 @app.route('/movie_by_rating/<tconst>', methods=['PUT'])
