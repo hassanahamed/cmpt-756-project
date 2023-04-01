@@ -160,7 +160,7 @@ def get_movies_by_rating():
         movies_with_ratings = []
         for movie in movies:
             rating_service_payload = {'tconst': movie.tconst}
-            rating_response = requests.get(rating_service_url, params=rating_service_payload)
+            rating_response = requests.get(rating_service_url, json=rating_service_payload)
             rating = rating_response.json()['averagerating']
             if rating >= float(rating_threshold):
                 movies_with_ratings.append({'movie': movie.to_dict(), 'rating': rating})
@@ -192,7 +192,7 @@ def get_movie_by_rating(tconst):
 
     rating_service_url = 'http://rating-service:5002/ratings'
     rating_service_payload = {'tconst': tconst}
-    rating_response = requests.get(rating_service_url, params=rating_service_payload)
+    rating_response = requests.get(rating_service_url, json=rating_service_payload)
     rating = rating_response.json()['averagerating']
     return jsonify({'movie': movie.to_dict(), 'rating': rating})
 
@@ -215,7 +215,7 @@ def delete_movie_by_rating(tconst):
 
     rating_service_url = 'http://rating-service:5002/ratings'
     rating_service_payload = {'tconst': tconst}
-    rating_response = requests.delete(rating_service_url, params=rating_service_payload)
+    rating_response = requests.delete(rating_service_url, json=rating_service_payload)
     if rating_response.status_code == 404:
         return jsonify({'error': 'Rating not found for movie'}), 404
     elif rating_response.status_code != 204:
