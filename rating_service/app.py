@@ -20,7 +20,7 @@ db = SQLAlchemy(app)
 
 class Rating(db.Model):
     __tablename__ = 'ratings'
-    tconst = db.Column(db.String(100), db.ForeignKey('movie_details.tconst'), nullable=False, primary_key=True)
+    tconst = db.Column(db.String(100), nullable=False, primary_key=True)
     averagerating = db.Column(db.Float, nullable=False)
     numvotes = db.Column(db.Integer, nullable=False)
 
