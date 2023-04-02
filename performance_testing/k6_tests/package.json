@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "influxdb": "^0.0.1",
+    "k6": "^0.0.0"
+  }
+}

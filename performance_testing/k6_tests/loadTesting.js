@@ -1,6 +1,16 @@
 import http from "k6/http";
 import { check, sleep } from "k6";
-import { InfluxDB } from "k6/metrics";
+import { Rate, Trend } from "k6/metrics";
+
+const latencyTrend1 = new Trend("latency_api1");
+const responseTimeTrend1 = new Trend("response_time_api1");
+const throughputTrend1 = new Trend("throughput_api1");
+const errorRate1 = new Rate("errors_api1");
+
+const latencyTrend2 = new Trend("latency_api2");
+const responseTimeTrend2 = new Trend("response_time_api2");
+const throughputTrend2 = new Trend("throughput_api2");
+const errorRate2 = new Rate("errors_api2");
 
 export let options = {
   scenarios: {
@@ -15,34 +25,19 @@ export let options = {
       gracefulRampDown: "30s",
     },
   },
-  // Configure the influxdb output
-  ext: {
-    influxDB: {
-      host: "http://34.174.39.10:8086",
-      database: "mydb",
-      measurement: "load_testing_metrics",
-      tags: {
-        load_test_name: "endpoint_load_test",
-      },
+  // Output to InfluxDB
+  // Adjust the values below with your own InfluxDB server details
+  // Note that you should create the 'k6' database in your InfluxDB instance beforehand
+  // and that the InfluxDB user should have write permissions to that database
+  // Otherwise, the script will output an error
+  influxDBv1: {
+    address: "http://34.174.39.10:8086",
+    database: "mydb",
+    tags: { 
+      loadtest: "example"
     },
   },
 };
-
-// Define the metrics to collect
-let latency = new InfluxDB({
-  measurement: "latency",
-  tags: { request_type: "GET" },
-});
-
-let responseTime = new InfluxDB({
-  measurement: "response_time",
-  tags: { request_type: "GET" },
-});
-
-let throughput = new InfluxDB({
-  measurement: "throughput",
-  tags: { request_type: "GET" },
-});
 
 export default function() {
   // Send requests to both endpoints simultaneously using the batch function
@@ -62,15 +57,26 @@ export default function() {
     "response is JSON": (r) => r.headers["Content-Type"] === "application/json"
   });
 
-  // Record latency, response time and throughput metrics
-  let latencyValue = res.reduce((acc, r) => acc + r.timings.duration, 0) / res.length;
-  let responseTimeValue = res.reduce((acc, r) => acc + r.timings.duration, 0);
-  let throughputValue = res.length / (responseTimeValue / 1000);
+  // Record latency, response time and throughput metrics for each endpoint separately
+  let latencyValue1 = res[0].timings.duration;
+  let responseTimeValue1 = res[0].timings.duration;
+  let throughputValue1 = 1 / (responseTimeValue1 / 1000);
 
-  // Log the metrics
-  latency.addPoint(latencyValue);
-  responseTime.addPoint(responseTimeValue);
-  throughput.addPoint(throughputValue);
+  let latencyValue2 = res[1].timings.duration;
+  let responseTimeValue2 = res[1].timings.duration;
+  let throughputValue2 = 1 / (responseTimeValue2 / 1000);
+
+  // Add metrics to trends for each endpoint separately
+  latencyTrend1.add(latencyValue1);
+  responseTimeTrend1.add(responseTimeValue1);
+  throughputTrend1.add(throughputValue1);
+  errorRate1.add(res[0].status !== 200);
+
+  latencyTrend2.add(latencyValue2);
+  responseTimeTrend2.add(responseTimeValue2);
+  throughputTrend2.add(throughputValue2);
+  errorRate2.add(res[1].status !== 200);
+
 
   // Sleep for a short period to avoid overwhelming the server
   sleep(0.1);
