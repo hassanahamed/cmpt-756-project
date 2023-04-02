@@ -58,11 +58,11 @@ export default function() {
   });
 
   // Record latency, response time and throughput metrics for each endpoint separately
-  let serverfullLatencyValue = res[0].timings.duration;
+  let serverfullLatencyValue = res[0].timings.waiting;
   let serverfullResponseTimeValue = res[0].timings.duration;
   let serverfullThroughputValue = 1 / (serverfullResponseTimeValue / 1000);
 
-  let serverlessLatencyValue = res[1].timings.duration;
+  let serverlessLatencyValue = res[1].timings.waiting;
   let serverlessResponseTimeValue = res[1].timings.duration;
   let serverlessThroughputValue = 1 / (serverlessResponseTimeValue / 1000);
 
