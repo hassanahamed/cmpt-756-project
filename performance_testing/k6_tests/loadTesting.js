@@ -2,15 +2,15 @@ import http from "k6/http";
 import { check, sleep } from "k6";
 import { Rate, Trend } from "k6/metrics";
 
-const latencyTrend1 = new Trend("latency_api1");
-const responseTimeTrend1 = new Trend("response_time_api1");
-const throughputTrend1 = new Trend("throughput_api1");
-const errorRate1 = new Rate("errors_api1");
+const latencyTrendServerfull = new Trend("latency_serverfull");
+const responseTimeTrendServerfull = new Trend("response_time_serverfull");
+const throughputTrendServerfull = new Trend("throughput_serverfull");
+const errorRateServerfull = new Rate("errors_serverfull");
 
-const latencyTrend2 = new Trend("latency_api2");
-const responseTimeTrend2 = new Trend("response_time_api2");
-const throughputTrend2 = new Trend("throughput_api2");
-const errorRate2 = new Rate("errors_api2");
+const latencyTrendServerless = new Trend("latency_serverless");
+const responseTimeTrendServerless = new Trend("response_time_serverless");
+const throughputTrendServerless = new Trend("throughput_serverless");
+const errorRateServerless = new Rate("errors_serverless");
 
 export let options = {
   scenarios: {
@@ -58,24 +58,25 @@ export default function() {
   });
 
   // Record latency, response time and throughput metrics for each endpoint separately
-  let latencyValue1 = res[0].timings.duration;
-  let responseTimeValue1 = res[0].timings.duration;
-  let throughputValue1 = 1 / (responseTimeValue1 / 1000);
+  let serverfullLatencyValue = res[0].timings.duration;
+  let serverfullResponseTimeValue = res[0].timings.duration;
+  let serverfullThroughputValue = 1 / (serverfullResponseTimeValue / 1000);
 
-  let latencyValue2 = res[1].timings.duration;
-  let responseTimeValue2 = res[1].timings.duration;
-  let throughputValue2 = 1 / (responseTimeValue2 / 1000);
+  let serverlessLatencyValue = res[1].timings.duration;
+  let serverlessResponseTimeValue = res[1].timings.duration;
+  let serverlessThroughputValue = 1 / (serverlessResponseTimeValue / 1000);
 
   // Add metrics to trends for each endpoint separately
-  latencyTrend1.add(latencyValue1);
-  responseTimeTrend1.add(responseTimeValue1);
-  throughputTrend1.add(throughputValue1);
-  errorRate1.add(res[0].status !== 200);
+  latencyTrendServerfull.add(serverfullLatencyValue);
+  responseTimeTrendServerfull.add(serverfullResponseTimeValue);
+  throughputTrendServerfull.add(serverfullThroughputValue);
+  errorRateServerfull.add(res[0].status !== 200);
 
-  latencyTrend2.add(latencyValue2);
-  responseTimeTrend2.add(responseTimeValue2);
-  throughputTrend2.add(throughputValue2);
-  errorRate2.add(res[1].status !== 200);
+  latencyTrendServerless.add(serverlessLatencyValue);
+  responseTimeTrendServerless.add(serverlessResponseTimeValue);
+  throughputTrendServerless.add(serverlessThroughputValue);
+  errorRateServerless.add(res[1].status !== 200);
+
 
 
   // Sleep for a short period to avoid overwhelming the server
