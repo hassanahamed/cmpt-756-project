@@ -41,41 +41,6 @@ class MovieDetails(db.Model):
             'release_year': self.release_year
         }
 
-# movies = [
-#     {"id": 1, "title": "The Shawshank Redemption", "year": 1994},
-#     {"id": 2, "title": "The Godfather", "year": 1972},
-#     {"id": 3, "title": "The Godfather: Part II", "year": 1974},
-#     {"id": 4, "title": "The Dark Knight", "year": 2008},
-#     {"id": 5, "title": "12 Angry Men", "year": 1957},
-# ]
-
-# @app.route("/movies")
-# def get_movies():
-#     for movie in movies:
-#         ratings_response = requests.get(f"http://rating-service:5002/ratings?movie_id={movie['id']}")
-#         if ratings_response.ok:
-#             ratings = ratings_response.json()
-#             movie["ratings"] = ratings
-#     return jsonify(movies)
-
-# @app.route('/movies/latest')
-# def get_latest_movies():
-#     latest_movies = MovieDetails.query.order_by(MovieDetails.release_year.desc()).limit(10).all()
-#     movies_list = []
-#     for movie in latest_movies:
-#         movies_list.append({
-#             'tconst': movie.tconst,
-#             'primarytitle': movie.primarytitle,
-#             'genres': movie.genres,
-#             'runtimeminutes': movie.runtimeminutes,
-#             'language': movie.language,
-#             'region': movie.region,
-#             'release_year': movie.release_year
-#         })
-#     return jsonify(movies_list)
-
-
-##          simple standalone movie service  --------------------------------------------------------------------  
 
 
 @app.route('/movies', methods=['GET'])
@@ -150,10 +115,6 @@ def delete_movie(tconst):
     db.session.delete(movie)
     db.session.commit()
     return jsonify({'message': 'Movie deleted successfully'})
-
-
-
-
 
 
 
@@ -259,8 +220,6 @@ def delete_movie_by_rating(tconst):
 
     return jsonify({'message': 'Rating deleted for movie'}), 204
    
-
-
 
 
 if __name__ == "__main__":
