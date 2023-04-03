@@ -1,4 +1,5 @@
 Flask==2.2.0
+gunicorn
 requests
 Flask-SQLAlchemy
 psycopg2==2.9.3

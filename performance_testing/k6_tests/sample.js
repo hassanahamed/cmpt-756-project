@@ -247,4 +247,6 @@ export default function() {
   // Sleep for a short period to avoid overwhelming the server
   sleep(0.5)
 
+  tconstIds = movieIds.filter((id) => id !== movieId);
+
 }

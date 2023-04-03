@@ -200,8 +200,26 @@ def update_movie_by_rating(tconst):
     if not movie:
         return jsonify({'error': 'Movie not found'}), 404
 
-    movie.primarytitle = movie_data['primarytitle']
-    movie.genres = movie_data['genres']
+    movie.primarytitle = movie_data.get('primarytitle', movie.primarytitle)
+    movie.genres = movie_data.get('genres', movie.genres)
+    movie.runtimeminutes = movie_data.get('runtimeminutes', movie.runtimeminutes)
+    movie.language = movie_data.get('language', movie.language)
+    movie.region = movie_data.get('region', movie.region)
+    movie.release_year = movie_data.get('release_year', movie.release_year)
+
+    rating_service_url = f'http://rating-service:5002/ratings/{tconst}'
+    rating_service_payload = {
+        'averagerating': movie_data.get('averagerating', movie.averagerating),
+        'numvotes': movie_data.get('numvotes', movie.numvotes)
+    }
+    rating_response = requests.put(rating_service_url, json=rating_service_payload)
+
+    if rating_response.status_code == 200:
+        db.session.commit()
+        return jsonify({'message': 'Movie and rating updated successfully'}), 200
+    else:
+        db.session.rollback()
+        return jsonify({'error': 'Failed to update rating'}), 500
 
 
 @app.route('/movie_by_rating/<tconst>', methods=['DELETE'])
@@ -215,7 +233,7 @@ def delete_movie_by_rating(tconst):
     rating_response = requests.delete(rating_service_url, json=rating_service_payload)
     if rating_response.status_code == 404:
         return jsonify({'error': 'Rating not found for movie'}), 404
-    elif rating_response.status_code != 204:
+    elif rating_response.status_code != 200:
         return jsonify({'error': 'Failed to delete rating for movie'}), 500
 
     return jsonify({'message': 'Rating deleted for movie'}), 204

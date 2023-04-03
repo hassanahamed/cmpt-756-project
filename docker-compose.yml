@@ -4,7 +4,7 @@ services:
   movie_service:
     build: movie_service
     ports:
-      - "5001:5000"
+      - "5001:8000"
     depends_on:
       - rating_service
     networks:
@@ -13,7 +13,7 @@ services:
   rating_service:
     build: rating_service
     ports:
-      - "5002:5000"
+      - "5002:8000"
     networks:
       - app_network
 
