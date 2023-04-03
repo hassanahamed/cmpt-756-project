@@ -5,6 +5,7 @@ import { Rate, Trend } from "k6/metrics";
 
 
 
+
 const latencyTrendServerfull = new Trend("serverfull_latency");
 const responseTimeTrendServerfull = new Trend("serverfull_response_time");
 const throughputTrendServerfull = new Trend("serverfull_throughput");
@@ -15,17 +16,7 @@ const responseTimeTrendServerless = new Trend("serverless_response_time");
 const throughputTrendServerless = new Trend("serverless_throughput");
 const errorRateServerless = new Rate("serverless_errors");
 
-let file = null;
-
-// // Open the file in the init phase
-// export function setup() {
-//   file = open("tconst_ids.txt", "w");
-// }
-
-// export function teardown() {
-//   // Close the file in the teardown phase
-//   file.close();
-// }
+let tconstIds = []
 
 export let options = {
   scenarios: {
@@ -80,6 +71,7 @@ export default function() {
   const serverlessUrl = "http://35.202.11.70:5001/movies";
   const headers = { 'Content-Type': 'application/json' };
 
+  // params: {headers: headers},
 
   // Send requests to both endpoints simultaneously using the batch function
   let res = http.batch([
@@ -118,6 +110,38 @@ export default function() {
   throughputTrendServerless.add(serverlessThroughputValue, { endpoint: "serverless" });
   errorRateServerless.add(res[1].status !== 200, { endpoint: "serverless" });
 
+  console.log(JSON.parse(movie1).tconst)
+
+  tconstIds.push(JSON.parse(movie1).tconst)
+  tconstIds.push(JSON.parse(movie2).tconst)
+
   // Sleep for a short period to avoid overwhelming the server
   sleep(0.1);
+
+
+
+
+  //  ------------------------------------------------------ POST ------------------------------------------------------
+
+
+  // Send requests to both endpoints simultaneously using the batch function
+  let res2 = http.batch([
+    { method: "PUT", url: serverfullUrl, params: {headers: headers}, body: movie1 },
+    { method: "PUT", url: serverlessUrl, params: {headers: headers}, body: movie2 }
+  ]);
+
+  // Check that the responses are valid
+  check(res2[0], {
+    "status is 200": (r) => r.status === 200,
+    'response body': (r) => r.body.indexOf('Movie created successfully') !== -1,
+  });
+
+  check(res2[1], {
+    "status is 200": (r) => r.status === 200,
+    'response body': (r) => r.body.indexOf('Movie created successfully') !== -1,
+  });
+
+
+
+
 }
