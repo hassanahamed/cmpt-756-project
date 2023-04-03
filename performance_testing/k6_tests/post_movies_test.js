@@ -56,7 +56,7 @@ export let options = {
 
 export default function() {
   // Generate a random movie object
-  let movie = JSON.stringify({
+  let movie1 = JSON.stringify({
     "tconst": Math.floor(Math.random() * 1000000000).toString(),
     "primarytitle": "Test Movie1",
     "genres": "Action",
@@ -66,18 +66,25 @@ export default function() {
     "release_year": 2022
   });
 
+  let movie2 = JSON.stringify({
+    "tconst": Math.floor(Math.random() * 1000000000).toString(),
+    "primarytitle": "Test Movie1",
+    "genres": "Action",
+    "runtimeminutes": 120,
+    "language": "English",
+    "region": "US",
+    "release_year": 2022
+  });
   // Define server URLs
   const serverfullUrl = "http://34.138.14.29:5001/movies";
   const serverlessUrl = "http://35.202.11.70:5001/movies";
   const headers = { 'Content-Type': 'application/json' };
 
-  // params: {headers: headers},
 
-  console.log(movie)
   // Send requests to both endpoints simultaneously using the batch function
   let res = http.batch([
-    { method: "POST", url: serverfullUrl, params: {headers: headers}, body: movie },
-    { method: "POST", url: serverlessUrl, params: {headers: headers}, body: movie }
+    { method: "POST", url: serverfullUrl, params: {headers: headers}, body: movie1 },
+    { method: "POST", url: serverlessUrl, params: {headers: headers}, body: movie2 }
   ]);
 
   // Check that the responses are valid
@@ -110,12 +117,6 @@ export default function() {
   responseTimeTrendServerless.add(serverlessResponseTimeValue, { endpoint: "serverless" });
   throughputTrendServerless.add(serverlessThroughputValue, { endpoint: "serverless" });
   errorRateServerless.add(res[1].status !== 200, { endpoint: "serverless" });
-
-  // // Store the tconst id in a file
-  // let tconst_to_be_saved = JSON.parse(res.body).tconst;
-  // let file = open("./tconst_ids.txt", "a+");
-  // file.write(tconst_to_be_saved + "\n");
-  // file.close();
 
   // Sleep for a short period to avoid overwhelming the server
   sleep(0.1);
