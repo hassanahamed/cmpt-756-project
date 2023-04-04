@@ -209,8 +209,8 @@ def update_movie_by_rating(tconst):
 
     rating_service_url = f'http://rating-service:5002/ratings/{tconst}'
     rating_service_payload = {
-        'averagerating': movie_data.get('averagerating', movie.averagerating),
-        'numvotes': movie_data.get('numvotes', movie.numvotes)
+        'averagerating': movie_data.get('averagerating', movie_data.get("averagerating")),
+        'numvotes': movie_data.get('numvotes', movie_data.get("numvotes"))
     }
     rating_response = requests.put(rating_service_url, json=rating_service_payload)
 
