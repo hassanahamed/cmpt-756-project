@@ -178,7 +178,7 @@ def create_movie_by_rating():
 
 
 
-@app.route('/movie_by_rating/<tconst>', methods=['GET'])
+@app.route('/movies_by_rating/<tconst>', methods=['GET'])
 def get_movie_by_rating(tconst):
     movie = MovieDetails.query.filter_by(tconst=tconst).first()
     if not movie:
@@ -193,7 +193,7 @@ def get_movie_by_rating(tconst):
         rating = ''
     return jsonify({'movie': movie.to_dict(), 'rating': rating})
 
-@app.route('/movie_by_rating/<tconst>', methods=['PUT'])
+@app.route('/movies_by_rating/<tconst>', methods=['PUT'])
 def update_movie_by_rating(tconst):
     movie_data = request.get_json()
     movie = MovieDetails.query.filter_by(tconst=tconst).first()
@@ -207,8 +207,9 @@ def update_movie_by_rating(tconst):
     movie.region = movie_data.get('region', movie.region)
     movie.release_year = movie_data.get('release_year', movie.release_year)
 
-    rating_service_url = f'http://rating-service:5002/ratings/{tconst}'
+    rating_service_url = f'http://rating-service:5002/ratings'
     rating_service_payload = {
+        'tconst' : tconst,
         'averagerating': movie_data.get('averagerating', movie_data.get("averagerating")),
         'numvotes': movie_data.get('numvotes', movie_data.get("numvotes"))
     }
@@ -222,7 +223,7 @@ def update_movie_by_rating(tconst):
         return jsonify({'error': 'Failed to update rating'}), 500
 
 
-@app.route('/movie_by_rating/<tconst>', methods=['DELETE'])
+@app.route('/movies_by_rating/<tconst>', methods=['DELETE'])
 def delete_movie_by_rating(tconst):
     movie = MovieDetails.query.filter_by(tconst=tconst).first()
     if not movie:
