@@ -235,8 +235,11 @@ def delete_movie_by_rating(tconst):
         return jsonify({'error': 'Rating not found for movie'}), 404
     elif rating_response.status_code != 200:
         return jsonify({'error': 'Failed to delete rating for movie'}), 500
+    
+    db.session.delete(movie)
+    db.session.commit()
 
-    return jsonify({'message': 'Rating deleted for movie'}), 204
+    return jsonify({'message': 'Movie and Rating deleted'}), 204
    
 
 
