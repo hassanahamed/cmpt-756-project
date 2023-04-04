@@ -88,8 +88,8 @@ export default function() {
     "release_year": 2022
   });
   // Define server URLs
-  const moviesServerfullUrl = "http://34.138.14.29:5001/movies";
-  const moviesServerlessUrl = "http://34.67.17.157:5001/movies";
+  const moviesServerfullUrl = "http://34.121.13.53:5001/movies";
+  const moviesServerlessUrl = "http://34.139.187.14:5001/movies";
   const headers = { 'Content-Type': 'application/json' };
 
   // params: {headers: headers},
