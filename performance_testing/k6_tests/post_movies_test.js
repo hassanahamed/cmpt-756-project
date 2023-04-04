@@ -70,7 +70,7 @@ export default function() {
   // Generate a random movie object
   let movie1 = JSON.stringify({
     "tconst": Math.floor(Math.random() * 1000000000).toString(),
-    "primarytitle": "Test Movie1",
+    "primarytitle": "Test Movie1 serverfull",
     "genres": "Action",
     "runtimeminutes": 120,
     "language": "English",
@@ -80,7 +80,7 @@ export default function() {
 
   let movie2 = JSON.stringify({
     "tconst": Math.floor(Math.random() * 1000000000).toString(),
-    "primarytitle": "Test Movie1",
+    "primarytitle": "Test Movie1 serverless",
     "genres": "Action",
     "runtimeminutes": 120,
     "language": "English",
@@ -89,7 +89,7 @@ export default function() {
   });
   // Define server URLs
   const moviesServerfullUrl = "http://34.138.14.29:5001/movies";
-  const moviesServerlessUrl = "http://35.202.11.70:5001/movies";
+  const moviesServerlessUrl = "http://34.67.17.157:5001/movies";
   const headers = { 'Content-Type': 'application/json' };
 
   // params: {headers: headers},
@@ -134,7 +134,7 @@ export default function() {
   tconstIds.push(JSON.parse(movie2).tconst);
 
   // Sleep for a short period to avoid overwhelming the server
-  sleep(0.5)
+  // sleep(0.5)
   
 
 
@@ -201,7 +201,7 @@ export default function() {
   // Sleep for a short period to avoid overwhelming the server
 
 
-  sleep(0.5);
+  // sleep(0.5);
 
 
   //  ------------------------------------------------------ Delete ------------------------------------------------------
@@ -245,8 +245,8 @@ export default function() {
 
 
   // Sleep for a short period to avoid overwhelming the server
-  sleep(0.5)
+  // sleep(0.5)
 
-  tconstIds = movieIds.filter((id) => id !== movieId);
+  // tconstIds = movieIds.filter((id) => id !== movieId);
 
 }

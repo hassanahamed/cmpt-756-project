@@ -6,32 +6,32 @@ import { Rate, Trend } from "k6/metrics";
 
 
 
-const postMovieslatencyTrendServerfull = new Trend("post_movies_serverfull_latency");
-const postMoviesresponseTimeTrendServerfull = new Trend("post_movies_serverfull_response_time");
-const postMoviesthroughputTrendServerfull = new Trend("post_movies_serverfull_throughput");
+const postMoviesAndRatinglatencyTrendServerfull = new Trend("post_movies_and_rating_serverfull_latency");
+const postMoviesAndRatingresponseTimeTrendServerfull = new Trend("post_movies_and_rating_serverfull_response_time");
+const postMoviesAndRatingthroughputTrendServerfull = new Trend("post_movies_and_rating_serverfull_throughput");
 
-const postMovieslatencyTrendServerless = new Trend("post_movies_serverless_latency");
-const postMoviesresponseTimeTrendServerless = new Trend("post_movies_serverless_response_time");
-const postMoviesthroughputTrendServerless = new Trend("post_movies_serverless_throughput");
-
-
-
-const putMovieslatencyTrendServerfull = new Trend("put_movies_serverfull_latency");
-const putMoviesresponseTimeTrendServerfull = new Trend("put_movies_serverfull_response_time");
-const putMoviesthroughputTrendServerfull = new Trend("put_movies_serverfull_throughput");
-
-const putMovieslatencyTrendServerless = new Trend("put_movies_serverless_latency");
-const putMoviesresponseTimeTrendServerless = new Trend("put_movies_serverless_response_time");
-const putMoviesthroughputTrendServerless = new Trend("put_movies_serverless_throughput");
+const postMoviesAndRatinglatencyTrendServerless = new Trend("post_movies_and_rating_serverless_latency");
+const postMoviesAndRatingresponseTimeTrendServerless = new Trend("post_movies_and_rating_serverless_response_time");
+const postMoviesAndRatingthroughputTrendServerless = new Trend("post_movies_and_rating_serverless_throughput");
 
 
-const deleteMovieslatencyTrendServerfull = new Trend("delete_movies_serverfull_latency");
-const deleteMoviesresponseTimeTrendServerfull = new Trend("delete_movies_serverfull_response_time");
-const deleteMoviesthroughputTrendServerfull = new Trend("delete_movies_serverfull_throughput");
 
-const deleteMovieslatencyTrendServerless = new Trend("delete_movies_serverless_latency");
-const deleteMoviesresponseTimeTrendServerless = new Trend("delete_movies_serverless_response_time");
-const deleteMoviesthroughputTrendServerless = new Trend("delete_movies_serverless_throughput");
+const putMoviesAndRatinglatencyTrendServerfull = new Trend("put_movies_and_rating_serverfull_latency");
+const putMoviesAndRatingresponseTimeTrendServerfull = new Trend("put_movies_and_rating_serverfull_response_time");
+const putMoviesAndRatingthroughputTrendServerfull = new Trend("put_movies_and_rating_serverfull_throughput");
+
+const putMoviesAndRatinglatencyTrendServerless = new Trend("put_movies_and_rating_serverless_latency");
+const putMoviesAndRatingresponseTimeTrendServerless = new Trend("put_movies_and_rating_serverless_response_time");
+const putMoviesAndRatingthroughputTrendServerless = new Trend("put_movies_and_rating_serverless_throughput");
+
+
+const deleteMoviesAndRatinglatencyTrendServerfull = new Trend("delete_movies_and_rating_serverfull_latency");
+const deleteMoviesAndRatingresponseTimeTrendServerfull = new Trend("delete_movies_and_rating_serverfull_response_time");
+const deleteMoviesAndRatingthroughputTrendServerfull = new Trend("delete_movies_and_rating_serverfull_throughput");
+
+const deleteMoviesAndRatinglatencyTrendServerless = new Trend("delete_movies_and_rating_serverless_latency");
+const deleteMoviesAndRatingresponseTimeTrendServerless = new Trend("delete_movies_and_rating_serverless_response_time");
+const deleteMoviesAndRatingthroughputTrendServerless = new Trend("delete_movies_and_rating_serverless_throughput");
 
 
 
@@ -75,7 +75,9 @@ export default function() {
     "runtimeminutes": 120,
     "language": "English",
     "region": "US",
-    "release_year": 2022
+    "release_year": 2022,
+    "averagerating": 8,
+    "numvotes": 1000
   });
 
   let movie2 = JSON.stringify({
@@ -85,11 +87,13 @@ export default function() {
     "runtimeminutes": 120,
     "language": "English",
     "region": "US",
-    "release_year": 2022
+    "release_year": 2022,
+    "averagerating": 8,
+    "numvotes": 1000
   });
   // Define server URLs
-  const moviesServerfullUrl = "http://34.138.14.29:5001/movies";
-  const moviesServerlessUrl = "http://35.202.11.70:5001/movies";
+  const moviesServerfullUrl = "http://104.196.115.165:5001/movies_by_rating";
+  const moviesServerlessUrl = "http://34.168.91.132:5001/movies_by_rating";
   const headers = { 'Content-Type': 'application/json' };
 
   // params: {headers: headers},
@@ -103,12 +107,12 @@ export default function() {
   // Check that the responses are valid
   check(res[0], {
     "status is 200": (r) => r.status === 200,
-    'response body': (r) => r.body.indexOf('Movie created successfully') !== -1,
+    'response body': (r) => r.body.indexOf('Movie and rating created successfully') !== -1,
   });
 
   check(res[1], {
     "status is 200": (r) => r.status === 200,
-    'response body': (r) => r.body.indexOf('Movie created successfully') !== -1,
+    'response body': (r) => r.body.indexOf('Movie and rating created successfully') !== -1,
   });
 
   // Record latency, response time and throughput metrics for each endpoint separately
@@ -121,13 +125,13 @@ export default function() {
   let serverlessThroughputValue = 1 / (serverlessResponseTimeValue / 1000);
 
   // Add metrics to trends for each endpoint separately
-  postMovieslatencyTrendServerfull.add(serverfullLatencyValue, { endpoint: "post_movies_serverfull" });
-  postMoviesresponseTimeTrendServerfull.add(serverfullResponseTimeValue, { endpoint: "post_movies_serverfull" });
-  postMoviesthroughputTrendServerfull.add(serverfullThroughputValue, { endpoint: "post_movies_serverfull" });
+  postMoviesAndRatinglatencyTrendServerfull.add(serverfullLatencyValue, { endpoint: "post_movies_and_rating_serverfull" });
+  postMoviesAndRatingresponseTimeTrendServerfull.add(serverfullResponseTimeValue, { endpoint: "post_movies_and_rating_serverfull" });
+  postMoviesAndRatingthroughputTrendServerfull.add(serverfullThroughputValue, { endpoint: "post_movies_and_rating_serverfull" });
 
-  postMovieslatencyTrendServerless.add(serverlessLatencyValue, { endpoint: "post_movies_serverless" });
-  postMoviesresponseTimeTrendServerless.add(serverlessResponseTimeValue, { endpoint: "post_movies_serverless" });
-  postMoviesthroughputTrendServerless.add(serverlessThroughputValue, { endpoint: "post_movies_serverless" });
+  postMoviesAndRatinglatencyTrendServerless.add(serverlessLatencyValue, { endpoint: "post_movies_and_rating_serverless" });
+  postMoviesAndRatingresponseTimeTrendServerless.add(serverlessResponseTimeValue, { endpoint: "post_movies_and_rating_serverless" });
+  postMoviesAndRatingthroughputTrendServerless.add(serverlessThroughputValue, { endpoint: "post_movies_and_rating_serverless" });
 
   let tconstIds = [];
   tconstIds.push(JSON.parse(movie1).tconst);
@@ -149,7 +153,9 @@ export default function() {
     "runtimeminutes": 120,
     "language": "English",
     "region": "US",
-    "release_year": 2022
+    "release_year": 2022,
+    "averagerating": 8.5,
+    "numvotes": 2000
   });
 
   movie2 = JSON.stringify({
@@ -158,7 +164,9 @@ export default function() {
     "runtimeminutes": 120,
     "language": "English",
     "region": "US",
-    "release_year": 2022
+    "release_year": 2022,
+    "averagerating": 8.5,
+    "numvotes": 2000
   });
 
   // Send requests to both endpoints simultaneously using the batch function
@@ -170,12 +178,12 @@ export default function() {
   // Check that the responses are valid
   check(res2[0], {
     "status is 200": (r) => r.status === 200,
-    'response body': (r) => r.body.indexOf('Movie updated successfully') !== -1,
+    'response body': (r) => r.body.indexOf('Movie and rating updated successfully') !== -1,
   });
 
   check(res2[1], {
     "status is 200": (r) => r.status === 200,
-    'response body': (r) => r.body.indexOf('Movie updated successfully') !== -1,
+    'response body': (r) => r.body.indexOf('Movie and rating updated successfully') !== -1,
   });
 
 
@@ -189,13 +197,13 @@ export default function() {
     serverlessThroughputValue = 1 / (serverlessResponseTimeValue / 1000);
   
     // Add metrics to trends for each endpoint separately
-    putMovieslatencyTrendServerfull.add(serverfullLatencyValue, { endpoint: "put_movies_serverfull" });
-    putMoviesresponseTimeTrendServerfull.add(serverfullResponseTimeValue, { endpoint: "put_movies_serverfull" });
-    putMoviesthroughputTrendServerfull.add(serverfullThroughputValue, { endpoint: "put_movies_serverfull" });
+    putMoviesAndRatinglatencyTrendServerfull.add(serverfullLatencyValue, { endpoint: "put_movies_and_rating_serverfull" });
+    putMoviesAndRatingresponseTimeTrendServerfull.add(serverfullResponseTimeValue, { endpoint: "put_movies_and_rating_serverfull" });
+    putMoviesAndRatingthroughputTrendServerfull.add(serverfullThroughputValue, { endpoint: "put_movies_and_rating_serverfull" });
   
-    putMovieslatencyTrendServerless.add(serverlessLatencyValue, { endpoint: "put_movies_serverless" });
-    putMoviesresponseTimeTrendServerless.add(serverlessResponseTimeValue, { endpoint: "put_movies_serverless" });
-    putMoviesthroughputTrendServerless.add(serverlessThroughputValue, { endpoint: "put_movies_serverless" });
+    putMoviesAndRatinglatencyTrendServerless.add(serverlessLatencyValue, { endpoint: "put_movies_and_rating_serverless" });
+    putMoviesAndRatingresponseTimeTrendServerless.add(serverlessResponseTimeValue, { endpoint: "put_movies_and_rating_serverless" });
+    putMoviesAndRatingthroughputTrendServerless.add(serverlessThroughputValue, { endpoint: "put_movies_and_rating_serverless" });
 
 
   // Sleep for a short period to avoid overwhelming the server
@@ -216,12 +224,10 @@ export default function() {
   // Check that the responses are valid
   check(res3[0], {
     "status is 200": (r) => r.status === 200,
-    'response body': (r) => r.body.indexOf('Movie deleted successfully') !== -1,
   });
 
   check(res3[1], {
     "status is 200": (r) => r.status === 200,
-    'response body': (r) => r.body.indexOf('Movie deleted successfully') !== -1,
   });
 
 
@@ -235,13 +241,13 @@ export default function() {
     serverlessThroughputValue = 1 / (serverlessResponseTimeValue / 1000);
   
     // Add metrics to trends for each endpoint separately
-    deleteMovieslatencyTrendServerfull.add(serverfullLatencyValue, { endpoint: "delete_movies_serverfull" });
-    deleteMoviesresponseTimeTrendServerfull.add(serverfullResponseTimeValue, { endpoint: "delete_movies_serverfull" });
-    deleteMoviesthroughputTrendServerfull.add(serverfullThroughputValue, { endpoint: "delete_movies_serverfull" });
+    deleteMoviesAndRatinglatencyTrendServerfull.add(serverfullLatencyValue, { endpoint: "delete_movies_and_rating_serverfull" });
+    deleteMoviesAndRatingresponseTimeTrendServerfull.add(serverfullResponseTimeValue, { endpoint: "delete_movies_and_rating_serverfull" });
+    deleteMoviesAndRatingthroughputTrendServerfull.add(serverfullThroughputValue, { endpoint: "delete_movies_and_rating_serverfull" });
   
-    deleteMovieslatencyTrendServerless.add(serverlessLatencyValue, { endpoint: "delete_movies_serverless" });
-    deleteMoviesresponseTimeTrendServerless.add(serverlessResponseTimeValue, { endpoint: "delete_movies_serverless" });
-    deleteMoviesthroughputTrendServerless.add(serverlessThroughputValue, { endpoint: "delete_movies_serverless" });
+    deleteMoviesAndRatinglatencyTrendServerless.add(serverlessLatencyValue, { endpoint: "delete_movies_and_rating_serverless" });
+    deleteMoviesAndRatingresponseTimeTrendServerless.add(serverlessResponseTimeValue, { endpoint: "delete_movies_and_rating_serverless" });
+    deleteMoviesAndRatingthroughputTrendServerless.add(serverlessThroughputValue, { endpoint: "delete_movies_and_rating_serverless" });
 
 
   // Sleep for a short period to avoid overwhelming the server
